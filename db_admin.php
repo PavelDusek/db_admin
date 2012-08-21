@@ -26,6 +26,9 @@ function add_tables_menus() {
 	foreach( $rows as $row) {
 		$table_name = $row['custom_name'];
 		$table_name_code = $row['table_name_without_wp_prefix'];
+		if ($table_name == "") {
+			$table_name = $table_name_code;
+		}
 		add_menu_page( $table_name, $table_name, 'edit_posts', "$table_name_code-top-level-handle", 'db_admin_selected_table_manager' );
 	}
 }

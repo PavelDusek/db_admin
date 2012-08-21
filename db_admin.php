@@ -9,6 +9,9 @@ Version: 1.0
 Licence: GPLv2 or later
 */
 //TODO non string fields
+//TODO data validation
+//TODO textarea
+//TODO option name
 
 //Add settings to admin options page:
 add_action( 'admin_menu', 'db_admin_menu' );
@@ -21,8 +24,9 @@ function add_tables_menus() {
 	global $wpdb;
 	$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM `' . $wpdb->prefix . 'db_admin_plugin`;' ), ARRAY_A);
 	foreach( $rows as $row) {
-		$table_name = $row['table_name_without_wp_prefix'];
-		add_menu_page( $table_name, $table_name, 'edit_posts', "$table_name-top-level-handle", 'db_admin_selected_table_manager' );
+		$table_name = $row['custom_name'];
+		$table_name_code = $row['table_name_without_wp_prefix'];
+		add_menu_page( $table_name, $table_name, 'edit_posts', "$table_name_code-top-level-handle", 'db_admin_selected_table_manager' );
 	}
 }
 
@@ -358,7 +362,8 @@ function db_admin_install() {
 	$sql = "CREATE TABLE `$tablename` (
 	`id` SMALLINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`table_name_without_wp_prefix` TEXT NOT NULL DEFAULT '',
-	`does_it_use_wp_prefix` TINYINT(1)
+	`does_it_use_wp_prefix` TINYINT(1),
+	`custom_name` TEXT NOT NULL DEFAULT ''
 	);";
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	dbDelta( $sql );
